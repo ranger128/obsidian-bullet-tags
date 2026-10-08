@@ -57,7 +57,8 @@ export default class TagIconsPlugin extends Plugin {
 		});
 	}
 
-	// Turns "- #idea text" into "<icon> text": the tag must be the first thing in the item.
+	// Turns "- #idea text" into "<icon> text", with the icon drawn as the list bullet itself.
+	// The tag must be the first thing in the item.
 	decorate(li: HTMLLIElement) {
 		const tagEl = li.querySelector<HTMLAnchorElement>(":scope > a.tag, :scope > p:first-child > a.tag");
 		if (!tagEl || !li.textContent?.trimStart().startsWith(tagEl.textContent ?? "")) return;
@@ -66,11 +67,14 @@ export default class TagIconsPlugin extends Plugin {
 		const match = this.settings.tagIcons.find((t) => t.tag.replace(/^#/, "").toLowerCase() === tag);
 		if (!match?.icon) return;
 
+		const svg = getIcon(match.icon);
+		if (!svg) return;
+
+		// styles.css masks Obsidian's own bullet with this icon, so it sits exactly in the bullet's slot.
 		li.addClass("tag-icon-bullet");
+		li.style.setProperty("--tag-icon", `url("data:image/svg+xml,${encodeURIComponent(new XMLSerializer().serializeToString(svg))}")`);
+		if (match.color) li.style.setProperty("--tag-icon-color", `var(${match.color})`);
 		tagEl.addClass("tag-icon-hidden");
-		const iconEl = createSpan({ cls: "tag-icon", attr: { "aria-label": `#${tag}` } });
-		renderIcon(iconEl, match);
-		tagEl.before(iconEl);
 	}
 
 	async loadSettings() {

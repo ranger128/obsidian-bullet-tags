@@ -1,31 +1,24 @@
-/* The icon replaces the list bullet. */
-li.tag-icon-bullet {
-	list-style: none;
-}
-li.tag-icon-bullet::marker,
-li.tag-icon-bullet > .list-bullet {
-	display: none;
+/* The icon replaces the bullet: Obsidian's dot (.list-bullet::after) is grown and masked with the icon.
+   The negative margins keep the dot's center and footprint, so text doesn't move. */
+li.tag-icon-bullet > .list-bullet::after {
+	width: 1em;
+	height: 1em;
+	margin: calc((var(--list-bullet-size) - 1em) / 2);
+	border-color: transparent;
+	border-radius: 0;
+	background-color: var(--tag-icon-color, var(--text-accent));
+	-webkit-mask: var(--tag-icon) center / contain no-repeat;
+	mask: var(--tag-icon) center / contain no-repeat;
 }
 a.tag.tag-icon-hidden {
 	display: none;
 }
 .tag-icon {
-	display: inline-block;
-	margin-inline-start: -1.25em;
-	margin-inline-end: 0.3em;
 	color: var(--text-accent);
-}
-/* Faint "#" before the icon so it still reads as a tag: "# <icon> text". */
-.tag-icon-bullet .tag-icon::before {
-	content: "# ";
-	white-space: pre;
-	color: var(--text-faint);
 }
 .tag-icon svg {
 	width: 1em;
 	height: 1em;
-	/* Centers a 1em icon on the text; "middle" sits it below. */
-	vertical-align: -0.125em;
 }
 /* Settings: one aligned grid row per tag bullet. */
 .tag-icons-row {
@@ -41,7 +34,6 @@ a.tag.tag-icon-hidden {
 }
 .tag-icons-row .tag-icon {
 	display: flex;
-	margin-inline-start: 0;
 	justify-content: center;
 	font-size: 1.4em;
 }
