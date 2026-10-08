@@ -20,8 +20,29 @@ a.tag.tag-icon-hidden {
 	width: 1em;
 	height: 1em;
 }
-.setting-item-name .tag-icon {
+/* Settings: one aligned grid row per tag bullet. */
+.tag-icons-row {
+	display: grid;
+	grid-template-columns: 2em 1fr 1fr 8em 2em;
+	gap: var(--size-4-2);
+	align-items: center;
+	padding: var(--size-4-1) 0;
+}
+.tag-icons-row > * {
+	min-width: 0;
+	width: 100%;
+}
+.tag-icons-row .tag-icon {
 	margin-inline-start: 0;
+	justify-content: center;
+	font-size: 1.4em;
+}
+.tag-icons-header {
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+}
+.tag-icons-invalid {
+	border-color: var(--text-error) !important;
 }
 .tag-icon-suggestion {
 	display: flex;

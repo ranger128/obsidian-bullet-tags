@@ -1,5 +1,6 @@
 import {
 	AbstractInputSuggest,
+	getIcon,
 	App,
 	MarkdownView,
 	Plugin,
@@ -12,6 +13,28 @@ import {
 interface TagIcon {
 	tag: string; // without the leading "#"
 	icon: string; // icon id, e.g. "lucide-lightbulb"
+	color?: string; // theme CSS variable, e.g. "--color-red"; empty = accent
+}
+
+const COLORS: Record<string, string> = {
+	"": "Accent",
+	"--text-normal": "Text",
+	"--text-muted": "Muted",
+	"--color-red": "Red",
+	"--color-orange": "Orange",
+	"--color-yellow": "Yellow",
+	"--color-green": "Green",
+	"--color-cyan": "Cyan",
+	"--color-blue": "Blue",
+	"--color-purple": "Purple",
+	"--color-pink": "Pink",
+};
+
+// Draws the icon into el in the row's theme color.
+function renderIcon(el: HTMLElement, row: TagIcon) {
+	el.empty();
+	setIcon(el, row.icon);
+	el.style.color = row.color ? `var(${row.color})` : "";
 }
 
 interface TagIconsSettings {
@@ -46,7 +69,7 @@ export default class TagIconsPlugin extends Plugin {
 		li.addClass("tag-icon-bullet");
 		tagEl.addClass("tag-icon-hidden");
 		const iconEl = createSpan({ cls: "tag-icon", attr: { "aria-label": `#${tag}` } });
-		setIcon(iconEl, match.icon);
+		renderIcon(iconEl, match);
 		tagEl.before(iconEl);
 	}
 
@@ -84,51 +107,67 @@ class TagIconsSettingTab extends PluginSettingTab {
 	display() {
 		const { containerEl } = this;
 		containerEl.empty();
+		containerEl.addClass("tag-icons-settings");
 		const rows = this.plugin.settings.tagIcons;
 
-		rows.forEach((row) => {
-			const setting = new Setting(containerEl);
-			const preview = setting.nameEl.createSpan({ cls: "tag-icon" });
-			const updatePreview = () => {
-				preview.empty();
-				setIcon(preview, row.icon);
-			};
-			updatePreview();
+		new Setting(containerEl)
+			.setName("Tag bullets")
+			.setDesc("List items that start with one of these tags show the icon in place of the bullet in Reading view.")
+			.setHeading();
 
-			setting
-				.addText((text) =>
-					text
-						.setPlaceholder("tag (without #)")
-						.setValue(row.tag)
-						.onChange(async (value) => {
-							row.tag = value.trim().replace(/^#/, "");
-							await this.plugin.saveSettings();
-						}),
-				)
-				.addText((text) => {
-					text.setPlaceholder("icon, e.g. lightbulb").setValue(row.icon);
-					const save = async (value: string) => {
-						row.icon = value.trim();
-						updatePreview();
-						await this.plugin.saveSettings();
-					};
-					text.onChange(save);
-					const suggest = new IconSuggest(this.app, text.inputEl).onSelect((id) => {
-						text.setValue(id);
-						suggest.close();
-						void save(id);
-					});
-				})
-				.addExtraButton((btn) =>
-					btn
-						.setIcon("trash")
-						.setTooltip("Remove")
-						.onClick(async () => {
-							rows.remove(row);
-							await this.plugin.saveSettings();
-							this.display();
-						}),
-				);
+		if (rows.length) {
+			const header = containerEl.createDiv({ cls: "tag-icons-row tag-icons-header" });
+			["", "Tag", "Icon", "Color", ""].forEach((label) => header.createSpan({ text: label }));
+		}
+
+		rows.forEach((row) => {
+			const rowEl = containerEl.createDiv({ cls: "tag-icons-row" });
+			const preview = rowEl.createSpan({ cls: "tag-icon" });
+			let iconInput: HTMLInputElement;
+			const paint = () => {
+				renderIcon(preview, row);
+				iconInput.toggleClass("tag-icons-invalid", !!row.icon && !getIcon(row.icon));
+			};
+			const update = async () => {
+				paint();
+				await this.plugin.saveSettings();
+			};
+
+			const tagInput = rowEl.createEl("input", { type: "text", value: row.tag, placeholder: "idea" });
+			tagInput.addEventListener("input", async () => {
+				row.tag = tagInput.value.trim().replace(/^#/, "");
+				await update();
+			});
+
+			iconInput = rowEl.createEl("input", { type: "text", value: row.icon, placeholder: "lightbulb" });
+			iconInput.addEventListener("input", async () => {
+				row.icon = iconInput.value.trim();
+				await update();
+			});
+			const suggest = new IconSuggest(this.app, iconInput).onSelect(async (id) => {
+				iconInput.value = id;
+				row.icon = id;
+				suggest.close();
+				await update();
+			});
+
+			const colorSelect = rowEl.createEl("select", { cls: "dropdown" });
+			Object.entries(COLORS).forEach(([value, label]) => colorSelect.createEl("option", { value, text: label }));
+			colorSelect.value = row.color ?? "";
+			colorSelect.addEventListener("change", async () => {
+				row.color = colorSelect.value;
+				await update();
+			});
+
+			const remove = rowEl.createEl("button", { cls: "clickable-icon", attr: { "aria-label": "Remove" } });
+			setIcon(remove, "trash");
+			remove.addEventListener("click", async () => {
+				rows.remove(row);
+				await this.plugin.saveSettings();
+				this.display();
+			});
+
+			paint();
 		});
 
 		new Setting(containerEl).addButton((btn) =>
@@ -136,7 +175,7 @@ class TagIconsSettingTab extends PluginSettingTab {
 				.setButtonText("Add tag bullet")
 				.setCta()
 				.onClick(async () => {
-					rows.push({ tag: "", icon: "" });
+					rows.push({ tag: "", icon: "", color: "" });
 					await this.plugin.saveSettings();
 					this.display();
 				}),
