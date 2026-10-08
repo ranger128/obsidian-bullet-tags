@@ -17,9 +17,9 @@ a.tag.tag-icon-hidden {
 }
 /* Faint "#" before the icon so it still reads as a tag: "# <icon> text". */
 .tag-icon-bullet .tag-icon::before {
-	content: "#";
+	content: "# ";
+	white-space: pre;
 	color: var(--text-faint);
-	margin-inline-end: 0.1em;
 }
 .tag-icon svg {
 	width: 1em;
