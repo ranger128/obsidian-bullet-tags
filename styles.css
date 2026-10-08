@@ -10,22 +10,6 @@ li.tag-icon-bullet > .list-bullet::after {
 	-webkit-mask: var(--tag-icon) center / contain no-repeat;
 	mask: var(--tag-icon) center / contain no-repeat;
 }
-/* Dataview lists have no .list-bullet, only the native marker, which can't be masked; draw the icon in its place instead. */
-:is(.block-language-dataview, .block-language-dataviewjs) li.tag-icon-bullet {
-	list-style: none;
-	position: relative;
-}
-:is(.block-language-dataview, .block-language-dataviewjs) li.tag-icon-bullet::before {
-	content: "";
-	position: absolute;
-	left: -1.25em;
-	top: calc((var(--line-height-normal) - 1) * 0.5em);
-	width: 1em;
-	height: 1em;
-	background-color: var(--tag-icon-color, var(--text-accent));
-	-webkit-mask: var(--tag-icon) center / contain no-repeat;
-	mask: var(--tag-icon) center / contain no-repeat;
-}
 a.tag.tag-icon-hidden {
 	display: none;
 }
