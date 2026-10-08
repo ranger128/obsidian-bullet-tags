@@ -39,11 +39,15 @@ function renderIcon(el: HTMLElement, row: BulletTag) {
 
 interface BulletTagsSettings {
 	tagIcons: BulletTag[];
+	dataview: boolean;
 }
 
 const DEFAULT_SETTINGS: BulletTagsSettings = {
 	tagIcons: [{ tag: "idea", icon: "lucide-lightbulb" }],
+	dataview: true,
 };
+
+const DATAVIEW_BLOCK = ".block-language-dataview, .block-language-dataviewjs";
 
 export default class BulletTagsPlugin extends Plugin {
 	settings: BulletTagsSettings;
@@ -55,13 +59,30 @@ export default class BulletTagsPlugin extends Plugin {
 		this.registerMarkdownPostProcessor((el) => {
 			el.querySelectorAll("li").forEach((li) => this.decorate(li));
 		});
+
+		// Dataview builds its lists itself, after post-processing and asynchronously, so watch for its list items appearing.
+		// shortcut: only watches the main window, add popout windows if someone uses Dataview there.
+		const observer = new MutationObserver((mutations) => {
+			if (!this.settings.dataview) return;
+			for (const m of mutations) {
+				m.addedNodes.forEach((node) => {
+					if (!(node instanceof HTMLElement) || !node.closest(DATAVIEW_BLOCK)) return;
+					const li = node.closest("li");
+					if (li) this.decorate(li);
+					node.querySelectorAll("li").forEach((li) => this.decorate(li));
+				});
+			}
+		});
+		observer.observe(this.app.workspace.containerEl, { childList: true, subtree: true });
+		this.register(() => observer.disconnect());
 	}
 
 	// Turns "- #idea text" into "<icon> text", with the icon drawn as the list bullet itself.
 	// The tag must be the first thing in the item.
 	decorate(li: HTMLLIElement) {
-		// Loose list items wrap their text in <p>, which comes after Obsidian's bullet span, so it's never :first-child.
-		const tagEl = li.querySelector<HTMLAnchorElement>(":scope > a.tag, :scope > p:first-of-type > a.tag");
+		if (li.querySelector(":scope > input")) return; // a task, not a bullet
+		// The item's own first tag (not a nested item's); Dataview and loose items wrap the text in <span>/<p>.
+		const tagEl = Array.from(li.querySelectorAll<HTMLAnchorElement>("a.tag")).find((a) => a.closest("li") === li);
 		if (!tagEl || !li.textContent?.trimStart().startsWith(tagEl.textContent ?? "")) return;
 
 		const tag = (tagEl.textContent ?? "").replace(/^#/, "").toLowerCase();
@@ -119,6 +140,16 @@ class BulletTagsSettingTab extends PluginSettingTab {
 			.setName("Bullet tags")
 			.setDesc("A bullet tag is a bullet followed by a tag, like - #idea, the way - [ ] is a checkbox. In Reading view the icon takes the place of the bullet.")
 			.setHeading();
+
+		new Setting(containerEl)
+			.setName("Dataview")
+			.setDesc("Also show the icon on bullet tags in Dataview results.")
+			.addToggle((toggle) =>
+				toggle.setValue(this.plugin.settings.dataview).onChange(async (value) => {
+					this.plugin.settings.dataview = value;
+					await this.plugin.saveSettings();
+				}),
+			);
 
 		if (rows.length) {
 			const header = containerEl.createDiv({ cls: "tag-icons-row tag-icons-header" });
