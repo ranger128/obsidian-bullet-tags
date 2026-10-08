@@ -1,0 +1,9 @@
+{
+	"id": "tag-icons",
+	"name": "Tag Icons",
+	"version": "0.1.0",
+	"minAppVersion": "1.5.0",
+	"description": "Show icons next to tags.",
+	"author": "ranger128",
+	"isDesktopOnly": false
+}
