@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  push:
+    tags: ["*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      # BRAT and the community store look up the release whose tag equals manifest.json's version.
+      - name: Check tag matches manifest version
+        run: test "$GITHUB_REF_NAME" = "$(node -p 'require("./manifest.json").version')"
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          files="main.js manifest.json"
+          [ -f styles.css ] && files="$files styles.css"
+          gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --generate-notes $files
