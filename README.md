@@ -4,7 +4,7 @@ Obsidian plugin for bullet journaling: list items that start with a configured t
 
 `- #idea this is an idea` renders in Reading view as 💡 this is an idea.
 
-Set up tag bullets in **Settings → Tag Icons**: add a row, type the tag (without `#`) and pick any Lucide icon. Only Reading view is affected; Live Preview and Source mode show the raw tag.
+Set up tag bullets in **Settings → Tag Icons**: add a row, type the tag (without `#`), pick any Lucide icon and a theme color. Only Reading view is affected; Live Preview and Source mode show the raw tag.
 
 ## Development
 
