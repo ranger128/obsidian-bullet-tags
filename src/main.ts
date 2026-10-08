@@ -76,6 +76,17 @@ export default class TagIconsPlugin extends Plugin {
 		li.style.setProperty("--tag-icon", `url("data:image/svg+xml,${encodeURIComponent(new XMLSerializer().serializeToString(svg))}")`);
 		if (match.color) li.style.setProperty("--tag-icon-color", `var(${match.color})`);
 		tagEl.addClass("tag-icon-hidden");
+
+		// Clicking the icon (Obsidian's bullet) acts as clicking the hidden tag, so Obsidian handles it like any tag.
+		for (const type of ["click", "auxclick"]) {
+			li.addEventListener(type, (evt: MouseEvent) => {
+				const target = evt.target as HTMLElement;
+				if (target.parentElement !== li || !target.hasClass("list-bullet")) return;
+				evt.preventDefault();
+				evt.stopPropagation();
+				tagEl.dispatchEvent(new MouseEvent(type, evt));
+			});
+		}
 	}
 
 	async loadSettings() {

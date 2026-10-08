@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-tag-icons",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"description": "Show icons next to tags in Obsidian.",
 	"main": "main.js",
 	"scripts": {
