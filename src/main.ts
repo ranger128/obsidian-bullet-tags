@@ -38,7 +38,7 @@ function renderIcon(el: HTMLElement, row: BulletTag) {
 }
 
 interface BulletTagsSettings {
-	tagIcons: BulletTag[]; // key stays "tagIcons" so existing saved settings still load
+	tagIcons: BulletTag[];
 }
 
 const DEFAULT_SETTINGS: BulletTagsSettings = {

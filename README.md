@@ -14,7 +14,7 @@ npm run dev    # watch build to main.js
 npm run build  # typecheck + production build
 ```
 
-To test in a vault, copy `main.js` and `manifest.json` into `<vault>/.obsidian/plugins/tag-icons/` (the plugin id is still `tag-icons`) and enable the plugin.
+To test in a vault, copy `main.js` and `manifest.json` into `<vault>/.obsidian/plugins/bullet-tags/` and enable the plugin.
 
 ## Releasing
 
