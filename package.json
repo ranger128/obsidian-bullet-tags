@@ -1,14 +1,16 @@
 {
-	"name": "obsidian-tag-icons",
-	"version": "0.3.3",
-	"description": "Show icons next to tags in Obsidian.",
+	"name": "obsidian-bullet-tags",
+	"version": "0.4.0",
+	"description": "Bullet tags for Obsidian: a bullet followed by a tag renders as an icon.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
-	"keywords": ["obsidian"],
+	"keywords": [
+		"obsidian"
+	],
 	"license": "MIT",
 	"devDependencies": {
 		"@types/node": "^20.0.0",
