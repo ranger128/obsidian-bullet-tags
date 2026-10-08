@@ -4,7 +4,7 @@ An Obsidian plugin for **bullet tags**: a list bullet followed by a tag, treated
 
 `- #idea this is an idea` renders in Reading view as 💡 this is an idea, with the icon in place of the bullet.
 
-Set up bullet tags in **Settings → Bullet Tags**: add a row, type the tag (without `#`), pick any Lucide icon and a theme color. The tag must be the first thing in the list item. Only Reading view and [Dataview](https://github.com/blacksmithgu/obsidian-dataview) results are affected (Dataview can be turned off in settings); Live Preview and Source mode show the raw tag.
+Set up bullet tags in **Settings → Bullet Tags**: add a row, type the tag (without `#`), pick any Lucide icon and a theme color. The tag must be the first thing in the list item. Only Reading view is affected; Live Preview and Source mode show the raw tag.
 
 ## Development
 
