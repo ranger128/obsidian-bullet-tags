@@ -18,12 +18,11 @@ To test in a vault, copy `main.js` and `manifest.json` into `<vault>/.obsidian/p
 
 ## Releasing
 
-```sh
-npm version patch   # or minor / major: bumps manifest.json + versions.json and tags (no "v" prefix)
-git push --follow-tags
-```
+Every push to `main` publishes a GitHub release for the version in `manifest.json` if that version has no release yet, with `main.js`, `manifest.json` and `styles.css` attached. To ship a new version, bump it and merge to `main`:
 
-Pushing the tag runs the Release workflow, which builds and publishes a GitHub release with `main.js` and `manifest.json` (and `styles.css` if present).
+```sh
+npm version patch --no-git-tag-version   # or minor / major: bumps package.json, manifest.json and versions.json
+```
 
 ## Install with BRAT
 
