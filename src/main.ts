@@ -37,6 +37,15 @@ function renderIcon(el: HTMLElement, row: BulletTag) {
 	el.style.color = row.color ? `var(${row.color})` : "";
 }
 
+// True when only Obsidian's bullet chrome and whitespace come before node.
+// Checking nodes, not textContent, because text-less elements like a task's checkbox still count.
+function leadsItem(node: Node): boolean {
+	for (let n = node.previousSibling; n; n = n.previousSibling) {
+		if (n instanceof HTMLElement ? !n.matches(".list-bullet, .list-collapse-indicator") : n.textContent?.trim()) return false;
+	}
+	return true;
+}
+
 interface BulletTagsSettings {
 	tagIcons: BulletTag[];
 }
@@ -62,7 +71,7 @@ export default class BulletTagsPlugin extends Plugin {
 	decorate(li: HTMLLIElement) {
 		// Loose list items wrap their text in <p>, which comes after Obsidian's bullet span, so it's never :first-child.
 		const tagEl = li.querySelector<HTMLAnchorElement>(":scope > a.tag, :scope > p:first-of-type > a.tag");
-		if (!tagEl || !li.textContent?.trimStart().startsWith(tagEl.textContent ?? "")) return;
+		if (!tagEl || !leadsItem(tagEl) || (tagEl.parentElement !== li && !leadsItem(tagEl.parentElement!))) return;
 
 		const tag = (tagEl.textContent ?? "").replace(/^#/, "").toLowerCase();
 		const match = this.settings.tagIcons.find((t) => t.tag.replace(/^#/, "").toLowerCase() === tag);
