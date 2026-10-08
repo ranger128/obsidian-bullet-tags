@@ -60,7 +60,8 @@ export default class TagIconsPlugin extends Plugin {
 	// Turns "- #idea text" into "<icon> text", with the icon drawn as the list bullet itself.
 	// The tag must be the first thing in the item.
 	decorate(li: HTMLLIElement) {
-		const tagEl = li.querySelector<HTMLAnchorElement>(":scope > a.tag, :scope > p:first-child > a.tag");
+		// Loose list items wrap their text in <p>, which comes after Obsidian's bullet span, so it's never :first-child.
+		const tagEl = li.querySelector<HTMLAnchorElement>(":scope > a.tag, :scope > p:first-of-type > a.tag");
 		if (!tagEl || !li.textContent?.trimStart().startsWith(tagEl.textContent ?? "")) return;
 
 		const tag = (tagEl.textContent ?? "").replace(/^#/, "").toLowerCase();
