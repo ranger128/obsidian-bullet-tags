@@ -19,7 +19,6 @@ a.tag.tag-icon-hidden {
 .tag-icon-bullet .tag-icon::before {
 	content: "#";
 	color: var(--text-faint);
-	font-size: 0.85em;
 	margin-inline-end: 0.1em;
 }
 .tag-icon svg {
