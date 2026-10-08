@@ -1,9 +1,9 @@
 {
 	"id": "tag-icons",
-	"name": "Tag Icons",
-	"version": "0.3.3",
+	"name": "Bullet Tags",
+	"version": "0.4.0",
 	"minAppVersion": "1.5.7",
-	"description": "Show icons next to tags.",
+	"description": "Bullet tags: a list bullet followed by a tag, like - #idea, renders as an icon in place of the bullet.",
 	"author": "ranger128",
 	"isDesktopOnly": false
 }

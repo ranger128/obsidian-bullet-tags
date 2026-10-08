@@ -1,10 +1,10 @@
-# obsidian-tag-icons
+# Bullet Tags
 
-Obsidian plugin for bullet journaling: list items that start with a configured tag render with an icon in place of the bullet.
+An Obsidian plugin for **bullet tags**: a list bullet followed by a tag, treated as one unit, the same way `- [ ]` is a checkbox.
 
 `- #idea this is an idea` renders in Reading view as 💡 this is an idea, with the icon in place of the bullet.
 
-Set up tag bullets in **Settings → Tag Icons**: add a row, type the tag (without `#`), pick any Lucide icon and a theme color. Only Reading view is affected; Live Preview and Source mode show the raw tag.
+Set up bullet tags in **Settings → Bullet Tags**: add a row, type the tag (without `#`), pick any Lucide icon and a theme color. The tag must be the first thing in the list item. Only Reading view is affected; Live Preview and Source mode show the raw tag.
 
 ## Development
 
@@ -14,7 +14,7 @@ npm run dev    # watch build to main.js
 npm run build  # typecheck + production build
 ```
 
-To test in a vault, copy `main.js` and `manifest.json` into `<vault>/.obsidian/plugins/tag-icons/` and enable the plugin.
+To test in a vault, copy `main.js` and `manifest.json` into `<vault>/.obsidian/plugins/tag-icons/` (the plugin id is still `tag-icons`) and enable the plugin.
 
 ## Releasing
 

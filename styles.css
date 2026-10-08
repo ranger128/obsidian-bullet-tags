@@ -20,7 +20,7 @@ a.tag.tag-icon-hidden {
 	width: 1em;
 	height: 1em;
 }
-/* Settings: one aligned grid row per tag bullet. */
+/* Settings: one aligned grid row per bullet tag. */
 .tag-icons-row {
 	display: grid;
 	grid-template-columns: 2em 1fr 1fr 8em 2em;

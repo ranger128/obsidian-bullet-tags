@@ -10,7 +10,7 @@ import {
 	setIcon,
 } from "obsidian";
 
-interface TagIcon {
+interface BulletTag {
 	tag: string; // without the leading "#"
 	icon: string; // icon id, e.g. "lucide-lightbulb"
 	color?: string; // theme CSS variable, e.g. "--color-red"; empty = accent
@@ -31,26 +31,26 @@ const COLORS: Record<string, string> = {
 };
 
 // Draws the icon into el in the row's theme color.
-function renderIcon(el: HTMLElement, row: TagIcon) {
+function renderIcon(el: HTMLElement, row: BulletTag) {
 	el.empty();
 	setIcon(el, row.icon);
 	el.style.color = row.color ? `var(${row.color})` : "";
 }
 
-interface TagIconsSettings {
-	tagIcons: TagIcon[];
+interface BulletTagsSettings {
+	tagIcons: BulletTag[]; // key stays "tagIcons" so existing saved settings still load
 }
 
-const DEFAULT_SETTINGS: TagIconsSettings = {
+const DEFAULT_SETTINGS: BulletTagsSettings = {
 	tagIcons: [{ tag: "idea", icon: "lucide-lightbulb" }],
 };
 
-export default class TagIconsPlugin extends Plugin {
-	settings: TagIconsSettings;
+export default class BulletTagsPlugin extends Plugin {
+	settings: BulletTagsSettings;
 
 	async onload() {
 		await this.loadSettings();
-		this.addSettingTab(new TagIconsSettingTab(this.app, this));
+		this.addSettingTab(new BulletTagsSettingTab(this.app, this));
 
 		this.registerMarkdownPostProcessor((el) => {
 			el.querySelectorAll("li").forEach((li) => this.decorate(li));
@@ -104,8 +104,8 @@ class IconSuggest extends AbstractInputSuggest<string> {
 	}
 }
 
-class TagIconsSettingTab extends PluginSettingTab {
-	constructor(app: App, private plugin: TagIconsPlugin) {
+class BulletTagsSettingTab extends PluginSettingTab {
+	constructor(app: App, private plugin: BulletTagsPlugin) {
 		super(app, plugin);
 	}
 
@@ -116,8 +116,8 @@ class TagIconsSettingTab extends PluginSettingTab {
 		const rows = this.plugin.settings.tagIcons;
 
 		new Setting(containerEl)
-			.setName("Tag bullets")
-			.setDesc("List items that start with one of these tags show the icon in place of the bullet in Reading view.")
+			.setName("Bullet tags")
+			.setDesc("A bullet tag is a bullet followed by a tag, like - #idea, the way - [ ] is a checkbox. In Reading view the icon takes the place of the bullet.")
 			.setHeading();
 
 		if (rows.length) {
@@ -177,7 +177,7 @@ class TagIconsSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl).addButton((btn) =>
 			btn
-				.setButtonText("Add tag bullet")
+				.setButtonText("Add bullet tag")
 				.setCta()
 				.onClick(async () => {
 					rows.push({ tag: "", icon: "", color: "" });
