@@ -10,9 +10,6 @@ li.tag-icon-bullet > .list-bullet::after {
 	-webkit-mask: var(--tag-icon) center / contain no-repeat;
 	mask: var(--tag-icon) center / contain no-repeat;
 }
-li.tag-icon-bullet > .list-bullet {
-	cursor: var(--cursor-link, pointer);
-}
 a.tag.tag-icon-hidden {
 	display: none;
 }
