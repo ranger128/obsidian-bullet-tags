@@ -1,7 +1,7 @@
 {
 	"id": "bullet-tags",
 	"name": "Bullet Tags",
-	"version": "0.4.0",
+	"version": "0.4.1",
 	"minAppVersion": "1.5.7",
 	"description": "Bullet tags: a list bullet followed by a tag, like - #idea, renders as an icon in place of the bullet.",
 	"author": "ranger128",
