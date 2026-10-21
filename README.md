@@ -1,10 +1,10 @@
 # Bullet Tags
 
-An Obsidian plugin for **bullet tags**: a list bullet followed by a tag, treated as one unit, the same way `- [ ]` is a checkbox.
+An Obsidian plugin for **bullet tags**: register a tag with an icon, and any list item containing that tag gets the icon as its bullet.
 
 `- #idea this is an idea` renders in Reading view as 💡 this is an idea, with the icon in place of the bullet.
 
-Set up bullet tags in **Settings → Bullet Tags**: add a row, type the tag (without `#`), pick any Lucide icon and a theme color. The tag must be the first thing in the list item. Only Reading view is affected; Live Preview and Source mode show the raw tag.
+Set up bullet tags in **Settings → Bullet Tags**: add a row, type the tag (without `#`), pick any Lucide icon and a theme color. The first registered tag in a list item wins, wherever it appears: `- call Sam #todo #idea` gets the `#todo` icon if both are registered. That tag is hidden, since the icon stands for it. Task items (`- [ ]`) keep their checkbox and tags. Only Reading view is affected; Live Preview and Source mode show the raw tag.
 
 ## Development
 

@@ -37,15 +37,6 @@ function renderIcon(el: HTMLElement, row: BulletTag) {
 	el.style.color = row.color ? `var(${row.color})` : "";
 }
 
-// True when only Obsidian's bullet chrome and whitespace come before node.
-// Checking nodes, not textContent, because text-less elements like a task's checkbox still count.
-function leadsItem(node: Node): boolean {
-	for (let n = node.previousSibling; n; n = n.previousSibling) {
-		if (n instanceof HTMLElement ? !n.matches(".list-bullet, .list-collapse-indicator") : n.textContent?.trim()) return false;
-	}
-	return true;
-}
-
 interface BulletTagsSettings {
 	tagIcons: BulletTag[];
 }
@@ -66,25 +57,25 @@ export default class BulletTagsPlugin extends Plugin {
 		});
 	}
 
-	// Turns "- #idea text" into "<icon> text", with the icon drawn as the list bullet itself.
-	// The tag must be the first thing in the item.
+	// Draws the item's first registered tag as its bullet: "- text #idea #todo" gets the #idea icon.
 	decorate(li: HTMLLIElement) {
-		// Loose list items wrap their text in <p>, which comes after Obsidian's bullet span, so it's never :first-child.
-		const tagEl = li.querySelector<HTMLAnchorElement>(":scope > a.tag, :scope > p:first-of-type > a.tag");
-		if (!tagEl || !leadsItem(tagEl) || (tagEl.parentElement !== li && !leadsItem(tagEl.parentElement!))) return;
+		// Task items show a checkbox, not a bullet, so their tags stay as they are.
+		if (li.hasClass("task-list-item")) return;
 
-		const tag = (tagEl.textContent ?? "").replace(/^#/, "").toLowerCase();
-		const match = this.settings.tagIcons.find((t) => t.tag.replace(/^#/, "").toLowerCase() === tag);
-		if (!match?.icon) return;
+		for (const tagEl of Array.from(li.querySelectorAll<HTMLAnchorElement>("a.tag"))) {
+			if (tagEl.closest("li") !== li) continue; // belongs to a nested item
+			const tag = (tagEl.textContent ?? "").replace(/^#/, "").toLowerCase();
+			const match = this.settings.tagIcons.find((t) => t.tag.replace(/^#/, "").toLowerCase() === tag);
+			const svg = match?.icon && getIcon(match.icon);
+			if (!svg) continue;
 
-		const svg = getIcon(match.icon);
-		if (!svg) return;
-
-		// styles.css masks Obsidian's own bullet with this icon, so it sits exactly in the bullet's slot.
-		li.addClass("tag-icon-bullet");
-		li.style.setProperty("--tag-icon", `url("data:image/svg+xml,${encodeURIComponent(new XMLSerializer().serializeToString(svg))}")`);
-		if (match.color) li.style.setProperty("--tag-icon-color", `var(${match.color})`);
-		tagEl.addClass("tag-icon-hidden");
+			// styles.css masks Obsidian's own bullet with this icon, so it sits exactly in the bullet's slot.
+			li.addClass("tag-icon-bullet");
+			li.style.setProperty("--tag-icon", `url("data:image/svg+xml,${encodeURIComponent(new XMLSerializer().serializeToString(svg))}")`);
+			if (match.color) li.style.setProperty("--tag-icon-color", `var(${match.color})`);
+			tagEl.addClass("tag-icon-hidden");
+			return;
+		}
 	}
 
 	async loadSettings() {
@@ -126,7 +117,7 @@ class BulletTagsSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Bullet tags")
-			.setDesc("A bullet tag is a bullet followed by a tag, like - #idea, the way - [ ] is a checkbox. In Reading view the icon takes the place of the bullet.")
+			.setDesc("In Reading view, the first of these tags in a list item replaces its bullet with the icon.")
 			.setHeading();
 
 		if (rows.length) {
