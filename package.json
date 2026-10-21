@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-bullet-tags",
-	"version": "0.4.1",
+	"version": "0.5.0",
 	"description": "Bullet tags for Obsidian: a bullet followed by a tag renders as an icon.",
 	"main": "main.js",
 	"scripts": {
