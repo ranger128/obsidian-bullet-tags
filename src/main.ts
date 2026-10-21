@@ -30,13 +30,6 @@ const COLORS: Record<string, string> = {
 	"--color-pink": "Pink",
 };
 
-// Draws the icon into el in the row's theme color.
-function renderIcon(el: HTMLElement, row: BulletTag) {
-	el.empty();
-	setIcon(el, row.icon);
-	el.style.color = row.color ? `var(${row.color})` : "";
-}
-
 interface BulletTagsSettings {
 	tagIcons: BulletTag[];
 }
@@ -66,7 +59,7 @@ export default class BulletTagsPlugin extends Plugin {
 			if (tagEl.closest("li") !== li) continue; // belongs to a nested item
 			const tag = (tagEl.textContent ?? "").replace(/^#/, "").toLowerCase();
 			const match = this.settings.tagIcons.find((t) => t.tag.replace(/^#/, "").toLowerCase() === tag);
-			const svg = match?.icon && getIcon(match.icon);
+			const svg = match && getIcon(match.icon);
 			if (!svg) continue;
 
 			// styles.css masks Obsidian's own bullet with this icon, so it sits exactly in the bullet's slot.
@@ -130,7 +123,9 @@ class BulletTagsSettingTab extends PluginSettingTab {
 			const preview = rowEl.createSpan({ cls: "tag-icon" });
 			let iconInput: HTMLInputElement;
 			const paint = () => {
-				renderIcon(preview, row);
+				preview.empty();
+				setIcon(preview, row.icon);
+				preview.style.color = row.color ? `var(${row.color})` : "";
 				iconInput.toggleClass("tag-icons-invalid", !!row.icon && !getIcon(row.icon));
 			};
 			const update = async () => {

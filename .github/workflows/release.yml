@@ -39,6 +39,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          files="main.js manifest.json"
-          [ -f styles.css ] && files="$files styles.css"
-          gh release create "$VERSION" --target "$GITHUB_SHA" --title "$VERSION" --generate-notes $files
+          gh release create "$VERSION" --target "$GITHUB_SHA" --title "$VERSION" --generate-notes main.js manifest.json styles.css
